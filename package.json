@@ -1,0 +1,24 @@
+{
+  "name": "xenomancers",
+  "version": "0.0.1",
+  "description": "Explore the galaxy, find new life and become the ultimate xenomancer",
+  "main": "server.js",
+  "scripts": {
+    "dev": "supervisor server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/implodingduck/xenomancers.git"
+  },
+  "author": "implodingduck",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/implodingduck/xenomancers/issues"
+  },
+  "homepage": "https://github.com/implodingduck/xenomancers#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "jquery": "^3.2.1",
+    "socket.io": "^2.0.4"
+  }
+}
