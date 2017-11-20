@@ -7,6 +7,34 @@
     </head>
     <body>
         <h1>Hello World!</h1>
+        <div id="future"></div>
+        <form id="chat_form">
+          <input id="chat_input" type="text" />
+          <input type="submit" value="send" />
+        </form>
+        <div id="userList">
         
+        </div>
+        <script type="text/javascript">
+          var username = prompt('Please enter your nickname', 'anon' + (new Date()).getTime());
+          username = username.replace(/ /g, '_');
+          $('h1').append(' ' + username);
+          var socket = io.connect(window.location.host);
+          socket.on('connect', function (date){
+            socket.emit('join', username);
+          });
+          
+          socket.on('broad', function (data){
+            $('#future').append(data.user + ': ' + data.message + '<br />');
+            $('#future').animate({ scrollTop: $('#future')[0].scrollHeight}, 1000);
+          })
+          
+          $('#chat_form').submit(function (e){
+            e.preventDefault();
+            var message = $('#chat_input').val();
+            socket.emit('message', { 'message': message });
+            $('#chat_input').val('');
+          })
+        </script>
     </body>
 </html>  
