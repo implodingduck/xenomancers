@@ -1,11 +1,24 @@
 <!doctype html>  
 <html lang="en">  
     <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0, target-densitydpi=device-dpi">
+
       <link rel="stylesheet" href="/css/screen.css">
       <script type="text/javascript" src="/jquery/dist/jquery.js"></script>
       <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+      <script type="text/javascript" src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+      <script type="text/javascript" src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+      <script type="text/javascript" src="https://code.createjs.com/soundjs-0.6.2.min.js"></script>
+      <script type="text/javascript" src="https://code.createjs.com/preloadjs-0.6.2.min.js"></script>
+      <script type="text/javascript" src="/hogan.js/dist/hogan-3.0.2.min.js"></script>
+      <script type="text/javascript" src="/js/templates.js"></script>
     </head>
-    <body>
+    <body onload="init();"> 
+        <div id="gameArea">
+          
+        </div>
+        
+        <canvas id="demoCanvas" width="850" height="500"></canvas>
         <h1>Hello World!</h1>
         <div id="future"></div>
         <form id="chat_form">
@@ -15,6 +28,7 @@
         <div id="userList">
         
         </div>
+       
         <script type="text/javascript">
           var username = prompt('Please enter your nickname', 'anon' + (new Date()).getTime());
           username = username.replace(/ /g, '_');
@@ -35,6 +49,32 @@
             socket.emit('message', { 'message': message });
             $('#chat_input').val('');
           })
+          
+          
+          var ge = {
+            randomEncounter: function(e){
+              socket.emit('game', { 'action': 'randomEncounter' });
+            }
+          }
+          socket.on('game', function(data){
+            console.log('on game');
+            console.log(data);
+            if(data.gameState == 'combat'){
+              $('#gameArea').html(templates["encounter"].render(data.encounter));
+            }
+          })
+          
+          function init() {
+            var stage = new createjs.Stage("demoCanvas");
+            var circle = new createjs.Shape();
+            circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 50);
+            circle.x = 100;
+            circle.y = 100;
+            circle.addEventListener("click", ge.randomEncounter)
+            stage.addChild(circle);
+            stage.update();
+          }
+          
         </script>
     </body>
 </html>  

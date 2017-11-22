@@ -5,7 +5,7 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
 var combat = require('./modules/combat.js');
-
+var game = require('./modules/game.js');
 
 app.use(express.static(__dirname + '/node_modules')); 
 app.use(express.static(__dirname + '/client/public'));
@@ -68,5 +68,10 @@ io.on('connection', function (client){
     if(dataToBroad.message){
       client.broadcast.to(client.room).emit('broad', dataToBroad);
     }
+  });
+  
+  client.on('game', function (data){
+    var dataToEmit = game[data.action](client, data);
+    client.emit('game', dataToEmit);
   });
 });
