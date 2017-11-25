@@ -58,10 +58,24 @@ module.exports = {
     }
     
     
-    
+    client.encounterId = encounter.encounterId;
     encounters[encounter.encounterId] = encounter;
     
     var dataToEmit = {
+      "gameState": "combat",
+      "encounter": encounter
+    };
+    console.log(dataToEmit);
+    return dataToEmit;
+  },
+  combat: function(client, data){
+    var combatActionKey = data.combatAction;
+    var combatAction = combatActions[combatActionKey];
+    var encounter = encounters[ client.encounterId];
+    var enemyHP = encounter.enemies[0].hp[0];
+    enemyHP -= combatAction.pow;
+    encounter.enemies[0].hp[0] = enemyHP;
+     var dataToEmit = {
       "gameState": "combat",
       "encounter": encounter
     };

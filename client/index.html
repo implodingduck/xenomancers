@@ -54,6 +54,15 @@
           var ge = {
             randomEncounter: function(e){
               socket.emit('game', { 'action': 'randomEncounter' });
+            },
+            wireCombatUI: function(e){
+              $('.combatAction').click(ge.submitCombatAction);
+            },
+            submitCombatAction: function(e){
+              e.preventDefault();
+              var combatAction = $(this).data('action');
+              socket.emit('game', { 'action': 'combat', 'combatAction': combatAction });
+              
             }
           }
           socket.on('game', function(data){
@@ -61,6 +70,7 @@
             console.log(data);
             if(data.gameState == 'combat'){
               $('#gameArea').html(templates["encounter"].render(data.encounter));
+              ge.wireCombatUI();
             }
           })
           
