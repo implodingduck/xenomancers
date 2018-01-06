@@ -13,12 +13,12 @@
       <script type="text/javascript" src="/hogan.js/dist/hogan-3.0.2.min.js"></script>
       <script type="text/javascript" src="/js/templates.js"></script>
     </head>
-    <body onload="init();"> 
+    <body> 
         <div id="gameArea">
           
         </div>
         
-        <canvas id="demoCanvas" width="850" height="500"></canvas>
+       
         <h1>Hello World!</h1>
         <div id="future"></div>
         <form id="chat_form">
@@ -30,7 +30,7 @@
         </div>
        
         <script type="text/javascript">
-          var username = prompt('Please enter your nickname', 'anon' + (new Date()).getTime());
+          var username = 'anon' + (new Date()).getTime();
           username = username.replace(/ /g, '_');
           $('h1').append(' ' + username);
           var socket = io.connect(window.location.host);
@@ -58,6 +58,12 @@
             wireCombatUI: function(e){
               $('.combatAction').click(ge.submitCombatAction);
             },
+            wireManagement: function(e){
+              $('button.menu').click(function(e){
+                e.preventDefault;
+                socket.emit('game', { 'action': $(this).data('action') });
+              });
+            },
             submitCombatAction: function(e){
               e.preventDefault();
               var combatAction = $(this).data('action');
@@ -65,25 +71,24 @@
               
             }
           }
+          var gamestates = {
+            combat: function(data){
+              $('#gameArea').html(templates["encounter"].render(data.encounter));
+              ge.wireCombatUI();
+            },
+            management: function(data){
+              $('#gameArea').html(templates["management"].render({}));
+              ge.wireManagement();
+            }
+          }
           socket.on('game', function(data){
             console.log('on game');
             console.log(data);
-            if(data.gameState == 'combat'){
-              $('#gameArea').html(templates["encounter"].render(data.encounter));
-              ge.wireCombatUI();
-            }
+            gamestates[data.gameState](data);
           })
+          gamestates.management();
           
-          function init() {
-            var stage = new createjs.Stage("demoCanvas");
-            var circle = new createjs.Shape();
-            circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 50);
-            circle.x = 100;
-            circle.y = 100;
-            circle.addEventListener("click", ge.randomEncounter)
-            stage.addChild(circle);
-            stage.update();
-          }
+        
           
         </script>
     </body>

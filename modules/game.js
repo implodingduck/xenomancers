@@ -52,9 +52,11 @@ module.exports = {
       "encounterId": (new Date()).getTime(),
       "enemies": [{
         "name": enemyTypes["Monster"].name,
-        "hp": [enemyTypes["Monster"].hp, enemyTypes["Monster"].hp]
+        "hp": [enemyTypes["Monster"].hp, enemyTypes["Monster"].hp],
+        "combatActions": enemyTypes["Monster"].combatActions
       }],
-      "combatActions": ["Bash", "Fireball"]
+      "combatActions": ["Bash", "Fireball"],
+      "hp": [100,100]
     }
     
     
@@ -75,7 +77,13 @@ module.exports = {
     var enemyHP = encounter.enemies[0].hp[0];
     enemyHP -= combatAction.pow;
     encounter.enemies[0].hp[0] = enemyHP;
-     var dataToEmit = {
+    var playerHP = encounter.hp[0];
+    var enemyCombatActionKey = encounter.enemies[0].combatActions[0];
+    var enemyCombatAction = combatActions[enemyCombatActionKey];
+    playerHP -= enemyCombatAction.pow;
+    encounter.hp[0] = playerHP;
+    
+    var dataToEmit = {
       "gameState": "combat",
       "encounter": encounter
     };
